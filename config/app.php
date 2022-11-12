@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Facade;
 
 return [
@@ -185,7 +186,8 @@ return [
         /*
          * Package Service Providers...
          */
-
+        App\Providers\ImageDownloadProvider::class,
+        App\Providers\ImageStoreRepositoryServiceProvider::class,
         /*
          * Application Service Providers...
          */

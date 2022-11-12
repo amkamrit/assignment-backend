@@ -1,15 +1,21 @@
-<?php
+<?php 
+namespace App\Http\Repository;
 
-namespace App\Http\Controllers\MasterController;
-
-use App\Http\Controllers\Controller;
+use App\Http\Contracts\storeInterface;
 use Illuminate\Http\Request;
-use DB;
 use Storage;
-class MasterController extends Controller
-{
-    public function imageStoreFunction($data)
-    {
+use App\Http\Resources\ImageResource;
+use Response;
+use DB;
+
+class ImageStoreRepository implements ImageStoreIntreface{
+    public  function __construct(){
+        $this->whichModel=app('App\Models\Image');
+        $this->responseResource=ImageResource::class;
+        Artisan::call('download-image');
+        // unsplash_init();
+    }
+    public function imageStoreFunction($data){
         DB::beginTransaction();
         try {
             $path = $data[0]['links']['download'];
@@ -21,9 +27,6 @@ class MasterController extends Controller
             $model->title=$data[0]['links']['download'];
             $model->save();
             DB::commit();
-            if (method_exists(new $this->whichModel(), 'afterCreateProcess')) {
-                $model->afterCreateProcess();
-            }
             if ($model instanceof $this->whichModel) {
                 return (new $this->responseResource($model))->response()->setStatusCode(200);
             } else {
